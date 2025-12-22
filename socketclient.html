@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Client</title>
+</head>
+<body>
+    <h1>Socket.IO Example</h1>
+    <button id="sendBtn">Send Message</button>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io('http://localhost:3000');
+        // Create a synthetic click MouseEvent
+        let evt = new MouseEvent("click", {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+            screenX,
+            screenY
+        });
+
+        // Send the event to the checkbox element
+        console.log("ScreenX =", evt.screenX)
+        console.log("ScreenY =", evt.screenY)
+        // cb.dispatchEvent(evt);
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('message', (msg) => {
+            console.log('Message from server:', msg);
+        });
+
+        document.getElementById('sendBtn').onclick = () => {
+            socket.send('Hello from client');
+            // socket.send('screenX = ', evt.screenX);
+            // socket.send('screenY = ', evt.screenY);
+        };
+        // function simulateClick() {
+        // Get the element to send a click event
+        // const cb = document.getElementById("checkbox");
+
+        
+        // }
+        // document.getElementById("button").addEventListener("click", simulateClick);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<p>
+  <label><input type="checkbox" id="checkbox" /> Checked</label>
+</p>
+<p>
+  <button id="button">Click me to send a MouseEvent to the checkbox</button>
+</p>
+<script>
+
+function simulateClick() {
+  // Get the element to send a click event
+  const cb = document.getElementById("checkbox");
+
+  // Create a synthetic click MouseEvent
+  let evt = new MouseEvent("click", {
+    bubbles: true,
+    cancelable: true,
+    view: window,
+    screenX,
+    screenY
+  });
+
+  // Send the event to the checkbox element
+  console.log("ScreenX =", evt.screenX)
+  console.log("ScreenY =", evt.screenY)
+  cb.dispatchEvent(evt);
+}
+document.getElementById("button").addEventListener("click", simulateClick);
+
+</script>
