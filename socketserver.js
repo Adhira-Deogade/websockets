@@ -41,11 +41,22 @@ io.on("connection", (socket) => {
     // Listen for messages from the client
     socket.on('message', (msg) => {
         console.log('Received message:', msg);
-        socket.emit('message', `Server received: ${msg}`);
+        io.emit('message', `Server received: ${msg}`);
+
+        // socket.emit('message', `Server received: ${msg}`);
+        // socket.broadcast.emit('hi');
+        io.emit('chat message', msg);
     });
+
+    socket.on('cursor-position', (evt) => {
+        console.log('cursor-position', evt);
+        socket.broadcast.emit('cursor-position', {...evt, id: socket.id})
+    });
+    
     // On client disconnect
     socket.on('disconnect', () => {
         console.log('Client disconnected');
+        io.emit('cursor-disconnect', {id: socket.id})
     });
 });
 

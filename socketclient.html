@@ -6,45 +6,90 @@
     <title>Socket.IO Client</title>
 </head>
 <body>
+    <style>
+        :root,body{min-height: 100vh;}
+    </style>
     <h1>Socket.IO Example</h1>
+    <p>
+    <button id="button">Click me to send a MouseEvent to the checkbox</button>
+    </p>
+    <!-- <p>
+        <canvas id="myPics" width="560" height="360"></canvas>
+    </p> -->
     <button id="sendBtn">Send Message</button>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        const cursors = new Map()
+
+        const getOrCreateCursor = (id) => {
+            let existing = cursors.get(id)
+            if (existing) {
+                return existing
+            }
+
+
+            const el = document.createElement('div')
+
+            Object.assign(el.style, {
+display: 'block',
+position: 'fixed',
+transform: 'translate(-50%, -50%)',
+background: '#000',
+width: '16px',
+height: '16px',
+transition: '0.3s left, 0.3s right',
+clipPath: 'path("M 0 0 L 0 12 L 3 12 L 5 16 L 8 16 L 6 12 L 9 12 Z")',
+
+            })
+
+            cursors.set(id, el)
+
+            document.body.appendChild(el)
+
+            return el
+        }
+
+        const deleteCursor = (id) => {
+            let existing = cursors.get(id)
+            if (existing) {
+                existing.remove()
+                cursors.delete(id)
+            }
+
+        }
+
+
         const socket = io('http://localhost:3000');
-        // Create a synthetic click MouseEvent
-        let evt = new MouseEvent("click", {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-            screenX,
-            screenY
-        });
-
-        // Send the event to the checkbox element
-        console.log("ScreenX =", evt.screenX)
-        console.log("ScreenY =", evt.screenY)
-        // cb.dispatchEvent(evt);
-
         socket.on('connect', () => {
             console.log('Connected to server');
         });
 
-        socket.on('message', (msg) => {
+        socket.on('cursor-position', (msg) => {
+            // const msg = JSON.parse(msg)
+            console.log(msg)
+            const cursor = getOrCreateCursor(msg.id);
+            Object.assign(cursor.style, {
+                left: msg.x + 'px',
+                 top: msg.y + 'px'
+            })
+        });
+
+        socket.on('cursor-disconnect', (msg) => {
+            console.log('disconnect', msg)
+            // const msg = JSON.parse(msg_string)
+            deleteCursor(msg.id)
+        });
+
+        socket.on('chat message', (msg) => {
             console.log('Message from server:', msg);
         });
 
-        document.getElementById('sendBtn').onclick = () => {
-            socket.send('Hello from client');
-            // socket.send('screenX = ', evt.screenX);
-            // socket.send('screenY = ', evt.screenY);
-        };
-        // function simulateClick() {
-        // Get the element to send a click event
-        // const cb = document.getElementById("checkbox");
-
-        
-        // }
-        // document.getElementById("button").addEventListener("click", simulateClick);
+        document.body.addEventListener("mousemove", (evt) => {
+            console.log("Evt = ", evt);
+            socket.send('clientX = ' + evt.clientX);
+            socket.send('clientY = ' + evt.clientY);
+            socket.emit('cursor-position', {x: evt.clientX, y: evt.clientY})
+        })
 
     </script>
 </body>
