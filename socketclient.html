@@ -6,28 +6,31 @@
     <title>Socket.IO Client</title>
 </head>
 <body>
+    <!-- This is gonna make the cursor location available throughout the webpage -->
     <style>
         :root,body{min-height: 100vh;}
     </style>
     <h1>Socket.IO Example</h1>
-    <p>
-    <button id="button">Click me to send a MouseEvent to the checkbox</button>
-    </p>
     <!-- <p>
-        <canvas id="myPics" width="560" height="360"></canvas>
+    <button id="button">Click me to send a MouseEvent to the checkbox</button>
     </p> -->
-    <button id="sendBtn">Send Message</button>
+    <!-- <button id="sendBtn">Send Message</button> -->
+     <!-- This script is important for using the websocket protocol -->
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        // We are creating a dictionary called cursors
         const cursors = new Map()
-
+        // We are creating a function called getOrCreateCursor
+        // which returns the id stored in the cursor dictionary else adds it
+        // to the dictionary
+        // The dictionary has this data -
+        // Key = user_id; Value = new html section with CSS
         const getOrCreateCursor = (id) => {
             let existing = cursors.get(id)
             if (existing) {
                 return existing
             }
-
-
+            console.log("cursor id = ", id)
             const el = document.createElement('div')
 
             Object.assign(el.style, {
@@ -42,6 +45,7 @@ clipPath: 'path("M 0 0 L 0 12 L 3 12 L 5 16 L 8 16 L 6 12 L 9 12 Z")',
 
             })
 
+            // Add user_id and document, html repr to dictionary
             cursors.set(id, el)
 
             document.body.appendChild(el)
@@ -59,14 +63,14 @@ clipPath: 'path("M 0 0 L 0 12 L 3 12 L 5 16 L 8 16 L 6 12 L 9 12 Z")',
         }
 
 
-        const socket = io('http://localhost:3000');
+        const socket = io();
         socket.on('connect', () => {
             console.log('Connected to server');
         });
 
         socket.on('cursor-position', (msg) => {
             // const msg = JSON.parse(msg)
-            console.log(msg)
+            // console.log(msg)
             const cursor = getOrCreateCursor(msg.id);
             Object.assign(cursor.style, {
                 left: msg.x + 'px',
@@ -80,12 +84,12 @@ clipPath: 'path("M 0 0 L 0 12 L 3 12 L 5 16 L 8 16 L 6 12 L 9 12 Z")',
             deleteCursor(msg.id)
         });
 
-        socket.on('chat message', (msg) => {
-            console.log('Message from server:', msg);
-        });
+        // socket.on('chat message', (msg) => {
+        //     // console.log('Message from server:', msg);
+        // });
 
         document.body.addEventListener("mousemove", (evt) => {
-            console.log("Evt = ", evt);
+            // console.log("Evt = ", evt);
             socket.send('clientX = ' + evt.clientX);
             socket.send('clientY = ' + evt.clientY);
             socket.emit('cursor-position', {x: evt.clientX, y: evt.clientY})
