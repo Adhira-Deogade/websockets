@@ -4,7 +4,7 @@
   "description": "Real-time cursor sharing app",
   "main": "socketserver.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node socketserver.js"
   },
   "engines": {
     "node": ">=18"
