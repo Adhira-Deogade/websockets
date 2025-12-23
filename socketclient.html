@@ -32,12 +32,14 @@
             }
             console.log("cursor id = ", id)
             const el = document.createElement('div')
+            const hash = getHash(id);
+            const hue = hash % 360;
 
             Object.assign(el.style, {
 display: 'block',
 position: 'fixed',
 transform: 'translate(-50%, -50%)',
-background: '#000',
+background: `hsl(${hue}, 70%, 60%)`,
 width: '16px',
 height: '16px',
 transition: '0.3s left, 0.3s right',
@@ -63,6 +65,31 @@ clipPath: 'path("M 0 0 L 0 12 L 3 12 L 5 16 L 8 16 L 6 12 L 9 12 Z")',
         }
 
 
+        // This function will create a random color
+        // This color will be used to associate with the socket_id
+        // To make sure that each socket_id gets a unique color, we will use hashing
+        // function getRandomHslColor() {
+        //     const hue = Math.floor(Math.random() * 361); // 0 to 360 degrees
+        //     const saturation = '100%'; // Full saturation for vibrant colors
+        //     const lightness = '50%'; // Medium lightness
+        //     return `hsl(${hue}, ${saturation}, ${lightness})`;
+        // }
+        const getHash = (str) => {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                // Bitwise shift and add for uniform distribution
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+                hash |= 0; // Force to 32-bit integer
+            }
+            return Math.abs(hash); // Ensure positive value
+        };
+
+
+        // Example usage:
+        // socket_color = getRandomHslColor();
+        // console.log("Random socket color = ", socket_color); 
+        // Output: hsl(275, 100%, 50%)
+
         const socket = io();
         socket.on('connect', () => {
             console.log('Connected to server');
@@ -84,15 +111,12 @@ clipPath: 'path("M 0 0 L 0 12 L 3 12 L 5 16 L 8 16 L 6 12 L 9 12 Z")',
             deleteCursor(msg.id)
         });
 
-        // socket.on('chat message', (msg) => {
-        //     // console.log('Message from server:', msg);
-        // });
-
         document.body.addEventListener("mousemove", (evt) => {
             // console.log("Evt = ", evt);
             socket.send('clientX = ' + evt.clientX);
             socket.send('clientY = ' + evt.clientY);
             socket.emit('cursor-position', {x: evt.clientX, y: evt.clientY})
+            // document.body.style.backgroundColor = socket_color;
         })
 
     </script>
