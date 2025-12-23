@@ -1,4 +1,14 @@
 {
+  "name": "realtime-cursor-app",
+  "version": "1.0.0",
+  "description": "Real-time cursor sharing app",
+  "main": "socketserver.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "socket.io": "^4.8.1"
   }
