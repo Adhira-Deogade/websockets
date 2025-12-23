@@ -43,7 +43,9 @@ io.on("connection", (socket) => {
     });
 });
 
-httpServer.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+// Listen to the App Engine-specified port, or 8080 otherwise
+const PORT = process.env.PORT || 8080;
+httpServer.listen(PORT, () => {
+  console.log("Server listening on port ${PORT}...");
 });
 
