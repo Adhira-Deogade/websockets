@@ -46,6 +46,6 @@ io.on("connection", (socket) => {
 // Listen to the App Engine-specified port, or 8080 otherwise
 const PORT = process.env.PORT || 8080;
 httpServer.listen(PORT, () => {
-  console.log("Server listening on port ${PORT}...");
+  console.log("Server listening on port ", PORT);
 });
 

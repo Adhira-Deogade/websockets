@@ -90,7 +90,7 @@ clipPath: 'path("M 0 0 L 0 12 L 3 12 L 5 16 L 8 16 L 6 12 L 9 12 Z")',
         // console.log("Random socket color = ", socket_color); 
         // Output: hsl(275, 100%, 50%)
 
-        const socket = io();
+        const socket = io("https://cursor-websocket-001.ue.r.appspot.com:8080");
         socket.on('connect', () => {
             console.log('Connected to server');
         });
